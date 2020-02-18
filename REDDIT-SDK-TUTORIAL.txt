@@ -1,0 +1,166 @@
+Developing for Pebble without CloudPebble - Windows, Linux, and Mac
+Dev
+After the shutdown of CloudPebble, developing apps for Pebble has been much harder, especially on Windows machines. However, using Windows Subsystem for Linux, this is entirely possible. Additionally, due to some broken links on the developer.rebble.io page, the general instructions for installation are hard to find, so this post will also serve as a host for the instructions for Mac and Linux as well.
+
+This post is mostly based off of this link: https://developer.rebble.io/developer.pebble.com/sdk/download/index.html
+
+Instructions for each operating system will follow.
+
+Windows
+The Windows installation is almost entirely the same as the Linux installation, but the Windows Subsystem for Linux (WSL) needs to be set up.
+
+Run this code in an administrator Powershell and restart: Enable-WindowsOptionalFeature -Online -FeatureName Microsoft-Windows-Subsystem-Linux
+
+You should have the bash command available now, which can be easily accessed by typing the command into the search bar in the bottom left. (It is also a Powershell command and located at C:\Windows\System32\bash.exe)
+
+Once inside bash, set up a username and password.
+
+Now it is time to download the Pebble SDK. Get it here. Download it to anywhere you want, but remember where it is.
+
+Then, within Windows or bash, navigate to the directory you want your projects to be located in, and create a folder called pebble-dev/.
+
+Change into that directory and extract the Pebble SDK that you just downloaded, for example: cd ~/pebble-dev/ tar -jxf ~/Downloads/pebble-sdk-4.5-linux64.tar.bz2
+
+You should now have the directory ~/pebble-dev/pebble-sdk-4.5-linux64 with the SDK files and directories inside it.
+
+Now add the pebble command to your path by running: echo 'export PATH=~/pebble-dev/pebble-sdk-4.5-linux64/bin:$PATH' >> ~/.bashrc &&. ~/.bashrc
+
+Note: replace all examples of ~/pebble-dev/ with your own path to your own pebble-dev/ folder.
+
+Install pip and virtualenv:
+
+sudo apt-get install python-pip python2.7-dev
+sudo pip install virtualenv
+Install the Python library dependencies locally:
+
+cd ~/pebble-dev/pebble-sdk-4.5-linux64
+virtualenv --no-site-packages .env
+source .env/bin/activate
+pip install -r requirements.txt
+deactivate
+WSL often has issues with Freetype, the font rendering library used by Pebble. Fix this by running sudo apt-get install libfreetype6-dev
+
+Get emulator dependencies: sudo apt-get install libsdl1.2debian libfdt1 libpixman-1-0
+
+Run sudo apt-get install npm
+
+The default SDKs pebble tries to get don't work, so install the archived SDK using pebble sdk install https://github.com/aveao/PebbleArchive/raw/master/SDKCores/sdk-core-4.3.tar.bz2
+
+Note: It might be helpful to have two running bash windows at this time.
+
+Navigate to ~/.pebble-sdk, and make a blank file inside called NO_TRACKING using touch NO_TRACKING. If there is alread a file called ENABLE_ANALYTICS in the folder, remove it.
+
+Your Pebble development environment should now be set up! Clone a project from github or create a new one and test it using pebble build.
+
+Lastly, to install it on an emulator, we need a display server, as WSL cannot natively display graphical windows. For this I'm using Xming, but you can use any server you want. Download and install it, then run it. (It won't do anything except show an icon in the system tray-- that's what we want.)
+
+Then run export DISPLAY=:0 in bash.
+
+Note: this only works in this terminal until you close it, since Xming needs to be launched every time as well. If you have Xming set up to launch at startup, it would also make sense to have this be done automatically, using echo 'export DISPLAY=:0' >> ~/.bash_profile && . ~/.bash_profile
+
+Now navigate to the build/ folder in the project you are working on, and run pebble install --emulator [aplite, basalt, chalk] [ProjectName].pbw, and a window with the emulator in it running the app should appear.
+
+Linux
+Download the Pebble SDK. Get it here. Download it to anywhere you want, but remember where it is.
+
+Navigate to the directory you want your projects to be located in in a terminal, and create a folder called pebble-dev/.
+
+Change into that directory and extract the Pebble SDK that you just downloaded, for example: cd ~/pebble-dev/ tar -jxf ~/Downloads/pebble-sdk-4.5-linux64.tar.bz2
+
+You should now have the directory ~/pebble-dev/pebble-sdk-4.5-linux64 with the SDK files and directories inside it.
+
+Now add the pebble command to your path by running: echo 'export PATH=~/pebble-dev/pebble-sdk-4.5-linux64/bin:$PATH' >> ~/.bashrc &&. ~/.bashrc
+
+Note: replace all examples of ~/pebble-dev/ with your own path to your own pebble-dev/ folder.
+
+Install pip and virtualenv:
+
+sudo apt-get install python-pip python2.7-dev
+sudo pip install virtualenv
+Install the Python library dependencies locally:
+
+cd ~/pebble-dev/pebble-sdk-4.5-linux64
+virtualenv --no-site-packages .env
+source .env/bin/activate
+pip install -r requirements.txt
+deactivate
+Get emulator dependencies: sudo apt-get install libsdl1.2debian libfdt1 libpixman-1-0
+
+Run sudo apt-get install npm
+
+The default SDKs pebble tries to get don't work, so install the archived SDK using pebble sdk install https://github.com/aveao/PebbleArchive/raw/master/SDKCores/sdk-core-4.3.tar.bz2
+
+Note: It might be helpful to have two running terminal windows at this time.
+
+Navigate to ~/.pebble-sdk, and make a blank file inside called NO_TRACKING using touch NO_TRACKING. If there is alread a file called ENABLE_ANALYTICS in the folder, remove it.
+
+Your Pebble development environment should now be set up! Clone a project from github or create a new one and test it using pebble build.
+
+Now navigate to the build/ folder in the project you are working on, and run pebble install --emulator [aplite, basalt, chalk] [ProjectName].pbw, and a window with the emulator in it running the app should appear.
+
+Mac
+Disclaimer: this is the only platform I haven't actually done this installation on, so all of this is being taken from the webpage mentioned up top.
+
+Method 1: Homebrew
+
+Run in a terminal:
+
+$ brew update && brew install pebble/pebble-sdk/pebble-sdk
+
+The default SDKs pebble tries to get don't work, so install the archived SDK using pebble sdk install https://github.com/aveao/PebbleArchive/raw/master/SDKCores/sdk-core-4.3.tar.bz2
+
+Navigate to /Users/[yourname]/Library/Application Support/Pebble SDK/, and make a blank file inside called NO_TRACKING using touch NO_TRACKING. If there is already a file called ENABLE_ANALYTICS in the folder, remove it.
+
+Method 2: Manual
+
+Install XCode Command Line Tools.
+
+Download the Pebble SDK. Get it here. Download it to anywhere you want, but remember where it is.
+
+Navigate to the directory you want your projects to be located in in a terminal, and create a folder called pebble-dev/.
+
+Change into that directory and extract the Pebble SDK that you just downloaded, for example: cd ~/pebble-dev/ tar -jxf ~/Downloads/pebble-sdk-4.5-mac.tar.bz2
+
+You should now have the directory ~/pebble-dev/pebble-sdk-4.5-mac with the SDK files and directories inside it.
+
+Now add the pebble command to your path by running: echo 'export PATH=~/pebble-dev/pebble-sdk-4.5-mac/bin:$PATH' >> ~/.bashrc &&. ~/.bashrc
+
+Note: replace all examples of ~/pebble-dev/ with your own path to your own pebble-dev/ folder.
+
+Install pip and virtualenv:
+
+sudo easy_install pip
+sudo pip install virtualenv
+Install the Python library dependencies locally:
+
+cd ~/pebble-dev/pebble-sdk-4.5-linux64
+virtualenv --no-site-packages .env
+source .env/bin/activate
+CFLAGS="" pip install -r requirements.txt
+deactivate
+Install freetype: brew install freetype
+
+Install emulator dependencies:
+
+brew update
+brew install boost-python
+brew install glib
+brew install pixman
+Note: If Python is installed using Homebrew, run: brew install boost-python --build-from-source
+
+The default SDKs pebble tries to get don't work, so install the archived SDK using pebble sdk install https://github.com/aveao/PebbleArchive/raw/master/SDKCores/sdk-core-4.3.tar.bz2
+
+Note: It might be helpful to have two running terminal windows at this time.
+
+Navigate to /Users/[yourname]/Library/Application Support/Pebble SDK/, and make a blank file inside called NO_TRACKING using touch NO_TRACKING. If there is already a file called ENABLE_ANALYTICS in the folder, remove it.
+
+Run brew install node
+
+Your Pebble development environment should now be set up! Clone a project from github or create a new one and test it using pebble build.
+
+Now navigate to the build/ folder in the project you are working on, and run pebble install --emulator [aplite, basalt, chalk] [ProjectName].pbw, and a window with the emulator in it running the app should appear.
+
+Editing code
+Once all of this is set up, having a code editor makes working with these projects much easier, and is another missing feature from CloudPebble. I like Atom for its Github integration and language support, but any editor should work. Just note that the two languages are C (for the watch app) and JavaScript (for the phone app).
+
+Anyways, I hoped this helped some people set up a development environment. If you have any questions or if I missed anything, let me know.
